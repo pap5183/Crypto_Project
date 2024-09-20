@@ -10,7 +10,7 @@ public class Encrypter {
         this.key = key.toLowerCase();
     }
 
-    public void encrypt(String plaintextFilePath, String outputFilePath){
+    public void encryptFile(String plaintextFilePath, String outputFilePath){
 
         BufferedReader plaintextReader = null;
 
@@ -34,6 +34,19 @@ public class Encrypter {
             System.err.println("Error reading file: " + plaintextFilePath);
         }
 
+        String ciphertext = encryptText(plaintext);
+
+        try {
+            BufferedWriter ciphertextWriter = new BufferedWriter(new FileWriter(outputFilePath));
+            ciphertextWriter.write(ciphertext);
+            ciphertextWriter.close();
+        }
+        catch (IOException e) {
+            System.err.println("Error writing file: " + outputFilePath);
+        }
+    }
+
+    private String encryptText(String plaintext) {
         plaintext = plaintext.toLowerCase();
 
         String ciphertext = "";
@@ -60,14 +73,6 @@ public class Encrypter {
 
             ciphertext += currentEncryptedChar;
         }
-
-        try {
-            BufferedWriter ciphertextWriter = new BufferedWriter(new FileWriter(outputFilePath));
-            ciphertextWriter.write(ciphertext);
-            ciphertextWriter.close();
-        }
-        catch (IOException e) {
-            System.err.println("Error writing file: " + outputFilePath);
-        }
+        return ciphertext;
     }
 }
