@@ -1,3 +1,5 @@
+import java.io.*;
+
 public class Encrypter {
     String key;
 
@@ -8,15 +10,38 @@ public class Encrypter {
         this.key = key.toLowerCase();
     }
 
-    public String encrypt(String text){
-        text = text.toLowerCase();
+    public void encrypt(String plaintextFilePath, String outputFilePath){
 
-        String encrypted = "";
+        BufferedReader plaintextReader = null;
+
+        try {
+            plaintextReader = new BufferedReader(new FileReader(plaintextFilePath));
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found: " + plaintextFilePath);
+            return;
+        }
+
+        String plaintext = "";
+        String line;
+
+        try {
+            while ((line = plaintextReader.readLine()) != null) {
+                plaintext += line + "\n";
+            }
+            plaintextReader.close();
+        }
+        catch (IOException e) {
+            System.err.println("Error reading file: " + plaintextFilePath);
+        }
+
+        plaintext = plaintext.toLowerCase();
+
+        String ciphertext = "";
         int currentShift = 0;
 
         int i = 0;
 
-        for(char currentChar : text.toCharArray()){
+        for(char currentChar : plaintext.toCharArray()){
             char currentEncryptedChar;
 
             if (currentChar < 'a' || currentChar > 'z'){
@@ -33,9 +58,16 @@ public class Encrypter {
                 i++;
             }
 
-            encrypted += currentEncryptedChar;
+            ciphertext += currentEncryptedChar;
         }
 
-        return encrypted;
+        try {
+            BufferedWriter ciphertextWriter = new BufferedWriter(new FileWriter(outputFilePath));
+            ciphertextWriter.write(ciphertext);
+            ciphertextWriter.close();
+        }
+        catch (IOException e) {
+            System.err.println("Error writing file: " + outputFilePath);
+        }
     }
 }
